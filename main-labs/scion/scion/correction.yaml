@@ -1,0 +1,125 @@
+convergence_time: 15
+lab_inline: |
+  scion01[0]="net14"
+  scion01[1]="net12"
+  scion01[2]="net13"
+  scion02[0]="net12"
+  scion02[1]="net23"
+  scion02[2]="net25"
+  scion03[0]="net13"
+  scion03[1]="net23"
+  scion03[2]="net34"
+  scion03[3]="net35"
+  scion04[0]="net14"
+  scion04[1]="net34"
+  scion05[0]="net25"
+  scion05[1]="net35"
+structure: cfg:structure.conf
+default_image: kathara/scion
+test:
+  requiring_startup:
+    - scion01
+    - scion02
+    - scion03
+    - scion04
+    - scion05
+  ip_mapping:
+    scion01:
+      "0": 10.0.14.1/24
+      "1": 10.0.12.1/24
+      "2": 10.0.13.1/24
+    scion02:
+      "0": 10.0.12.2/24
+      "1": 10.0.23.2/24
+      "2": 10.0.25.2/24
+    scion03:
+      "0": 10.0.13.3/24
+      "1": 10.0.23.3/24
+      "2": 10.0.34.3/24
+      "3": 10.0.35.3/24
+    scion04:
+      "0": 10.0.14.4/24
+      "1": 10.0.34.4/24
+    scion05:
+      "0": 10.0.25.5/24
+      "1": 10.0.35.5/24
+  daemons:
+    scion01:
+      - scion-router
+      - scion-control
+      - scion-daemon
+    scion02:
+      - scion-router
+      - scion-control
+      - scion-daemon
+    scion03:
+      - scion-router
+      - scion-control
+      - scion-daemon
+    scion04:
+      - scion-router
+      - scion-control
+      - scion-daemon
+    scion05:
+      - scion-router
+      - scion-control
+      - scion-daemon
+  reachability:
+    scion01:
+      - 10.0.12.2
+      - 10.0.13.3
+      - 10.0.14.4
+    scion02:
+      - 10.0.12.1
+      - 10.0.23.3
+      - 10.0.25.5
+    scion03:
+      - 10.0.13.1
+      - 10.0.23.2
+      - 10.0.34.4
+      - 10.0.35.5
+    scion04:
+      - 10.0.14.1
+      - 10.0.34.3
+    scion05:
+      - 10.0.25.2
+      - 10.0.35.3
+  protocols:
+    sciond:
+      address:
+        scion01: 42-ffaa:1:1,127.0.0.1
+        scion02: 42-ffaa:1:2,127.0.0.1
+        scion03: 42-ffaa:1:3,127.0.0.1
+        scion04: 42-ffaa:1:4,127.0.0.1
+        scion05: 42-ffaa:1:5,127.0.0.1
+      paths:
+        scion01:
+          42-ffaa:1:3:
+            - 42-ffaa:1:1 3>1 42-ffaa:1:3
+            - 42-ffaa:1:1 2>1 42-ffaa:1:2 2>2 42-ffaa:1:3
+          42-ffaa:1:2:
+            - 42-ffaa:1:1 2>1 42-ffaa:1:2
+          42-ffaa:1:5:
+            - 42-ffaa:1:1 3>1 42-ffaa:1:3 4>2 42-ffaa:1:5
+        scion02:
+          42-ffaa:1:3:
+            - 42-ffaa:1:2 2>2 42-ffaa:1:3
+            - 42-ffaa:1:2 1>2 42-ffaa:1:1 3>1 42-ffaa:1:3
+          42-ffaa:1:1:
+            - 42-ffaa:1:2 1>2 42-ffaa:1:1
+        scion03:
+          42-ffaa:1:4:
+            - 42-ffaa:1:3 3>2 42-ffaa:1:4
+            - 42-ffaa:1:3 1>3 42-ffaa:1:1 1>1 42-ffaa:1:4
+            - 42-ffaa:1:3 2>2 42-ffaa:1:2 1>2 42-ffaa:1:1 1>1 42-ffaa:1:4
+        scion04:
+          42-ffaa:1:5:
+            - 42-ffaa:1:4 2>3 42-ffaa:1:3 4>2 42-ffaa:1:5
+            - 42-ffaa:1:4 1>1 42-ffaa:1:1 3>1 42-ffaa:1:3 4>2 42-ffaa:1:5
+            - 42-ffaa:1:4 1>1 42-ffaa:1:1 2>1 42-ffaa:1:2 3>1 42-ffaa:1:5
+        scion05:
+          42-ffaa:1:3:
+            - 42-ffaa:1:5 2>4 42-ffaa:1:3
+            - 42-ffaa:1:5 1>3 42-ffaa:1:2 2>2 42-ffaa:1:3
+          42-ffaa:1:1:
+            - 42-ffaa:1:5 1>3 42-ffaa:1:2 1>2 42-ffaa:1:1
